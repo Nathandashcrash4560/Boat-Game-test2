@@ -8,13 +8,13 @@ var engine, world, backgroundImg;
 var canvas, angle, tower, ground, cannon;
 var cannonBall;
 var boat
-var boatAnimation=[]
+var boatAnimation = []
 var boatSpriteData, boatSpriteSheet
 function preload() {
   backgroundImg = loadImage("./assets/background.gif");
   towerImage = loadImage("./assets/tower.png");
-  boatSpriteData=loadJSON("./assets/Boat.json") 
-  boatSpriteSheet=loadImage("./assets/Boat.png")
+  boatSpriteData = loadJSON("./assets/Boat.json")
+  boatSpriteSheet = loadImage("./assets/Boat.png")
 }
 
 function setup() {
@@ -32,14 +32,14 @@ function setup() {
   World.add(world, tower);
   cannon = new Cannon(180, 110, 130, 100, angle);
   cannonBall = new CannonBall(cannon.x, cannon.y);
-  var boatFrames= boatSpriteData.frames
+  var boatFrames = boatSpriteData.frames
   console.log(boatSpriteData.frames)
   for (let index = 0; index < boatFrames.length; index++) {
-    var pos=boatFrame[index].frame
-    var IMG=boatSpriteSheet.get(pos.x,pos.y,pos.w,pos.h)
-boatAnimation.push(IMG)
+    var pos = boatFrames[index].frame
+    var IMG = boatSpriteSheet.get(pos.x, pos.y, pos.w, pos.h)
+    boatAnimation.push(IMG)
   }
- // boat = new Boat(width - 40, height - 60, 170, 170, -80)
+  // boat = new Boat(width - 40, height - 60, 170, 170, -80)
 }
 
 function draw() {
@@ -96,11 +96,11 @@ function showCannonBalls(ball, index) {
   }
 
 }
-
+var GameisOver = False
 function showboats() {
   if (boats.length > 0) {
 
-    if (boats[boats.length - 1] === undefined || boats[boats.length - 1].body.position.x < width - 300)  {
+    if (boats[boats.length - 1] === undefined || boats[boats.length - 1].body.position.x < width - 300) {
       var positions = [-40, -60, -70, -90, -30]
       var position = random(positions)
       var boat = new Boat(width - 40, height - 60, 170, 170, -80, boatAnimation)
@@ -113,6 +113,12 @@ function showboats() {
         Matter.Body.setVelocity(boats[index].body, { x: -0.9, y: 0.0 })
         boats[index].show()
         boats[index].animate()
+        var collision = Matter.SAT.collides(tower, boats[index].body)
+        if (collision.collided && !boats[index].isBroken) {
+          GameisOver = true
+          GameOver()
+        }
+
       }
 
 
@@ -144,4 +150,19 @@ function collisionBoat(index1) {
   }
 
 
+}
+
+
+
+function GameOver() {
+  swal(
+    { title: `Game Over!!!`, text: "Thanks for playing!!", imageUrl: "https://raw.githubusercontent.com/whitehatjr/PiratesInvasion/main/assets/boat.png",
+     imageSize: "150x150",
+     confirmButtonText: "Play Again" }
+  ),function (isConfirm){
+if(isConfirm){
+  location.reload()
+}
+   
+  }
 }
